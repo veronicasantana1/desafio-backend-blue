@@ -16,9 +16,8 @@ Desenvolver uma API RESTful para a marcação de consultas médicas. A API permi
 
 ## Critérios Técnicos
 
-- **Banco de Dados:** Use o Doctrine para gerenciamento do banco de dados.
-- **Rotas:** Utilize Route Annotation do Symfony para definir as rotas.
-- **Arquitetura:** Siga o padrão MVC para estruturação do projeto.
+- **Banco de Dados:** Use alguma ferramenta para gerenciamento do banco de dados.
+- **Arquitetura:** Siga o padrão MVC para estruturação do projeto e utilize o Express. 
 - **Tratamento de Erros:** Implemente um sistema de tratamento de erros eficaz.
 
 ## Entregáveis
