@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 export enum WeekDays{	
     Monday = "Monday",
     Tuesday = "Tuesday",
@@ -23,9 +23,9 @@ export class Schedule {
     @Column()
     end_time: string;
 
-    @Column()
+    @CreateDateColumn()
     created_at: Date;
   
-    @Column()
+    @UpdateDateColumn()
     updated_at: Date;
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn } from "typeorm";
 export enum Specialty {
   Cardiologia = "Cardiologia",
   Dermatologia = "Dermatologia",
@@ -39,9 +39,9 @@ export class Doctor {
   @Column()
   crm: string;
 
-  @Column()
+  @CreateDateColumn()
   created_at: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updated_at: Date;
 }

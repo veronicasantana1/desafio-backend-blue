@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -6,7 +6,7 @@ export class User {
   id: number;
 
   @Column()
-  id_person: string;
+  id_person: number;
 
   @Column()
   email: string;
@@ -14,15 +14,15 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   insurance: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   desc_insurance: string;
 
-  @Column()
+  @CreateDateColumn()
   created_at: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updated_at: Date;
 }

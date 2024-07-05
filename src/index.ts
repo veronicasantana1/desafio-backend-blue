@@ -1,12 +1,16 @@
+import 'express-async-errors'
 import express from 'express'
-import consultas from './routes/consultas.router'
+import { AppDataSource } from './data-source'
+import routes from './routes/routes'
+import { errorMiddleware } from './middlewares/errors'
+
+AppDataSource.initialize().then(() => {
+
 const app = express()
 
-
-
 app.use(express.json())
-app.use('/consultas',consultas)
+app.use(routes)
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000')
+app.use(errorMiddleware)
+	return app.listen(process.env.PORT)
 })

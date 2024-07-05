@@ -4,10 +4,15 @@
         "module": "commonjs",
         "outDir": "./dist",
         "esModuleInterop": true,
+        "moduleResolution": "node",
+		"resolveJsonModule": true,
+		"allowJs": true,
         "strict": true,
+        "forceConsistentCasingInFileNames": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "strictPropertyInitialization": false,
+        "typeRoots": ["./src/@types"],
     },
     "include": [
         "./src"
