@@ -1,35 +1,34 @@
-import PDFDocument from 'pdfkit';
-import fs from 'fs';  
+import dayjs from "dayjs";
+import tz from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 
-export async function generatePDF(appointmentData: any, fileName: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const doc = new PDFDocument();
-      const writeStream = fs.createWriteStream(fileName);
-  
-      doc.pipe(writeStream);
-  
-      doc.fontSize(14).text('Appointment Details', { align: 'center' }).moveDown();
-  
-      appointmentData.forEach((data: any) => {
-        doc.fontSize(12).text(`Appointment ID: ${data.id}`);
-        doc.fontSize(10).text(`Date: ${data.date}`);
-        doc.fontSize(10).text(`Time: ${data.start_time} - ${data.end_time}`);
-        doc.fontSize(10).text(`Doctor: ${data.doctor.name}`);
-        doc.fontSize(10).text(`Specialty: ${data.doctor.specialty}`);
-        doc.fontSize(10).text(`Clinic: ${data.clinic}`);
-        doc.moveDown();
-      });
-  
-      doc.end();
-  
-      writeStream.on('finish', () => {
-        console.log(`PDF generated: ${fileName}`);
-        resolve();
-      });
-  
-      writeStream.on('error', (err) => {
-        console.error('Error generating PDF:', err);
-        reject(err);
-      });
-    });
-  }
+var pdf = require('html-pdf');
+
+interface Appointment {
+  date: Date;
+  id_user: number;
+  id_doctor: number;
+  id_clinic: number;
+}
+
+export async function generatePDF(appointment: Appointment): Promise<void> {
+  const formattedDate = dayjs(appointment.date).format('DD/MM/YYYY HH:mm');
+  const appointmentContent = `
+    <div>
+      <h1 style='color:red'>Appointment</h1>
+      <hr>
+      <p>Date: ${formattedDate}</p>
+      <p>Doctor ID: ${appointment.id_doctor}</p>
+      <p>Clinic ID: ${appointment.id_clinic}</p>
+    </div>
+  `;
+
+  pdf.create(appointmentContent, {}).toFile('appointment.pdf', (err: any) => {
+    if (err) {
+      console.error(err);
+      return;
+    }});
+
+  console.log('PDF gerado com sucesso');
+}
+

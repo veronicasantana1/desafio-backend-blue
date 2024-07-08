@@ -12,7 +12,7 @@ export class Appointment {
   id_doctor: number;
 
   @Column()
-  id_schedule: number;
+  date: Date;
 
   @Column()
   id_clinic: number;
