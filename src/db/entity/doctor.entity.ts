@@ -6,7 +6,6 @@ export enum Specialty {
   Gastroenterologia = "Gastroenterologia",
   Hematologia = "Hematologia",
   Imunologia = "Imunologia",
-  DoencaInfecciosa = "Doença Infecciosa",
   Nefrologia = "Nefrologia",
   Neurologia = "Neurologia",
   ObstetriciaGinecologia = "Obstetrícia e Ginecologia",
@@ -28,10 +27,10 @@ export class Doctor {
   id: number;
 
   @Column()
-  id_person: string;
+  id_person: number;
 
   @Column()
-  id_clinic: string;
+  id_clinic: number;
 
   @Column({ type: "text", enum: Specialty })
   specialty: Specialty;

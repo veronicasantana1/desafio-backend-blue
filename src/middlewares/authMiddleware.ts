@@ -4,11 +4,9 @@ import { UnauthorizedError } from "../helpers/api-errors";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../repositories/userRepository";
 
-
 type JwtPayload = {
     id: number;
 }
-
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers;
