@@ -63,8 +63,6 @@ export async function createAppointment(req: Request, res: Response) {
     id_doctor: doctor.id,
     date: date,
     id_clinic: clinic.id,
-    created_at: dayjs().utc().toDate(),
-    updated_at: dayjs().utc().toDate(), 
   });
 
   await AppointmentRepository.save(newAppointment);
@@ -99,7 +97,6 @@ export async function createAppointment(req: Request, res: Response) {
     clinic: {name: clinicName.name, address: clinicName.address, phone: clinicName.phone},
   };
   try {
-    console.log(userData.email)
     await sendAppointmentEmail(appointmentsData, userData.email);
     return res.status(201).json(newAppointment);
   } catch (error) {
@@ -173,8 +170,6 @@ export async function updateAppointment(req: Request, res: Response) {
       id_doctor: doctor.id,
       id_clinic: clinic.id,
       date,
-      created_at: dayjs().utc().toDate(),
-      updated_at: dayjs().utc().toDate(), 
     }
   );
 

@@ -18,8 +18,6 @@ export async function createUser(req: Request, res: Response) {
       cpf,
       phone,
       email,
-      created_at: dayjs().utc().toDate(),
-      updated_at: dayjs().utc().toDate(), 
     });
     await PersonRepository.save(newPerson);
 
@@ -28,8 +26,6 @@ export async function createUser(req: Request, res: Response) {
       email,
       id_person: newPerson.id,
       password: passwordHash,
-      created_at: dayjs().utc().toDate(),
-      updated_at: dayjs().utc().toDate(),
     });
     await UserRepository.save(newUser);
 

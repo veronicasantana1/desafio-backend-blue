@@ -34,8 +34,6 @@ export async function createDoctor(req: Request, res: Response) {
         specialty,
         id_person: newPerson.id,
         id_clinic: clinicName.id,
-        created_at: dayjs().utc().toDate(),
-        updated_at: dayjs().utc().toDate(), 
     })
 
     await DoctorRepository.save(newDoctor);

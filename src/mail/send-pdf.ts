@@ -21,7 +21,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: process.env.EMAIL_PASS_APP
   }
 });
 
@@ -36,7 +36,7 @@ export async function sendAppointmentEmail(appointment: Appointment, recipientEm
       text: 'Pro favor, encontre em anexo os detalhes da sua consulta.',
       attachments: [
         {
-          filename: 'appointment.pdf',
+          filename: pdfPath,
           path: pdfPath
         }
       ]

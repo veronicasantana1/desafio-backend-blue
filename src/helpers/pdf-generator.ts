@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import tz from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import path from "path";
 
@@ -86,7 +85,7 @@ export async function generatePDF(appointment: Appointment): Promise<string> {
   </div>
 `;
 
-const pdfPath = path.join('consulta.pdf');
+const pdfPath = path.join(`consulta_${appointment.user.name}_${dayjs(appointment.date).utc().format('DD_MM_YYYY_HH_mm')}.pdf`);
 
 pdf.create(appointmentContent, {}).toFile(pdfPath, (err: any, res: any) => {
   if (err) {

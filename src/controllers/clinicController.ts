@@ -18,9 +18,7 @@ export async function createClinic(req: Request, res: Response) {
       address,
       phone,
       cnpj,
-      cep,
-      created_at: dayjs().utc().toDate(),
-      updated_at: dayjs().utc().toDate(), 
+      cep, 
     });
 
     await ClinicRepository.save(newClinic);

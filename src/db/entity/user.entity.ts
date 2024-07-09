@@ -14,12 +14,6 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ nullable: true })
-  insurance: boolean;
-
-  @Column({ nullable: true })
-  desc_insurance: string;
-
   @CreateDateColumn()
   created_at: Date;
 

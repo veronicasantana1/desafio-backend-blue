@@ -9,6 +9,8 @@
 - JWT (JSON Web Tokens)
 - Nodemailer
 - Dayjs
+- SQLite
+- Docker
 
 #### Configuração do Projeto
 
@@ -16,6 +18,8 @@
 
 - **SQLite**
 - **SQLite Viewer**
+
+#### OBSERVAÇÕES
 
 1. **Clone o repositório**
 
@@ -31,8 +35,10 @@
    PORT=3000
    JWT_SECRET=sua_chave_secreta
    EMAIL_USER="seuemail@gmail.com"
-   EMAIL_PASS="sua_senha_de_aplicativo"
+   EMAIL_PASS_APP="sua_senha_de_aplicativo"
    ```
+  como configurar senhas de aplicativo:
+  https://support.google.com/accounts/answer/185833?hl=pt-BR&sjid=7632943762766771755-SA
 
 #### Execução do Projeto
 
@@ -62,7 +68,7 @@
      ```json
      {
        "name": "clinica 1",
-       "address": "avenida vasco da gama",
+       "address": "avenida vasco da gama, num 300",
        "phone": 71987309678,
        "cnpj": "12.345.678/0001-00",
        "cep": "41098031"
@@ -74,13 +80,13 @@
      ```json
      {
        "name": "clinica 1",
-       "address": "avenida vasco da gama",
+       "address": "avenida vasco da gama, num 300",
        "phone": 71987309678,
        "cnpj": "12.345.678/0001-00",
        "cep": "41098031",
+       "id": 9,
        "created_at": "2024-07-09T02:03:46.853Z",
        "updated_at": "2024-07-09T02:03:46.854Z",
-       "id": 9
      }
      ```
 
@@ -91,7 +97,7 @@
 
      ```json
      {
-       "name": "clinica 1",
+       "name": "Caio de Souza",
        "cpf": "12334568900",
        "phone": 719873009,
        "email": "doctor@email.com",
@@ -109,9 +115,9 @@
        "id_clinic": 1,
        "specialty": "Cardiologia",
        "crm": "20392093",
+       "id": 2,
        "created_at": "2024-07-09T02:05:41.751Z",
        "updated_at": "2024-07-09T02:05:41.751Z",
-       "id": 2
      }
      ```
 
@@ -123,9 +129,9 @@
 
      ```json
      {
-       "email": "vel2@email.com",
+       "email": "santanaveronica858@gmail.com",
        "password": "senha",
-       "name": "vel",
+       "name": "verônica",
        "cpf": "123.456.789-09",
        "phone": 71987566959
      }
@@ -136,12 +142,10 @@
      ```json
      {
        "id_person": 4,
-       "email": "vel2@email.com",
+       "email": "santanaveronica858@gmail.com",
+       "id": 2,
        "created_at": "2024-07-09T02:11:16.899Z",
        "updated_at": "2024-07-09T02:11:16.899Z",
-       "insurance": null,
-       "desc_insurance": null,
-       "id": 2
      }
      ```
 
@@ -152,7 +156,7 @@
 
      ```json
      {
-       "email": "vel2@gmail.com",
+       "email": "santanaveronica858@gmail.com",
        "password": "senha"
      }
      ```
@@ -164,9 +168,7 @@
        "userData": {
          "id": 2,
          "id_person": 4,
-         "email": "vel2@email.com",
-         "insurance": null,
-         "desc_insurance": null,
+         "email": "santanaveronica858@gmail.com",
          "created_at": "2024-07-09T02:11:16.899Z",
          "updated_at": "2024-07-09T02:11:16.899Z"
        },
@@ -185,9 +187,7 @@
     {
       "id": 2,
       "id_person": 4,
-      "email": "vel2@email.com",
-      "insurance": null,
-      "desc_insurance": null,
+      "email": "santanaveronica858@gmail.com",
       "created_at": "2024-07-09T02:11:16.899Z",
       "updated_at": "2024-07-09T02:11:16.899Z"
     }
@@ -215,11 +215,11 @@
     {
       "id_user": 1,
       "id_doctor": 1,
-      "date": "2089-05-09T17:40:00.000Z",
+      "date": "2024-07-09T17:40:00.000Z",
       "id_clinic": 1,
+      "id": 67,
       "created_at": "2024-07-09T01:32:27.952Z",
       "updated_at": "2024-07-09T01:32:27.952Z",
-      "id": 67
     }
     ```
 
@@ -232,7 +232,7 @@
 
     ```json
     {
-      "id": 2,
+      "id": 1,
       "date": "2025-05-09T17:40:00.000Z",
       "id_doctor": 1,
       "id_clinic": 1
@@ -243,7 +243,7 @@
 
     ```json
     {
-      "id": 2,
+      "id": 1,
       "id_user": 1,
       "id_doctor": 1,
       "date": "2025-05-09T17:40:00.000Z",
@@ -262,11 +262,34 @@
 
     ```json
     {
-      "id": 2
+      "id": 1
     }
     ```
+ **Exemplo de Resposta**:
+ {
+    "message": "Consulta Cancelada"
+}
 
 9. **Visualizar dados das consultas**
 
    - **Rota**: `GET /appointment/getAppointments`
    - **Incluir o Token retornado ao fazer login no cabeçalho Authorization como "Bearer token"**
+
+  **Exemplo de Resposta**:
+ [
+    {
+        "id": 1,
+        "date": "2025-05-09T17:40:00.000Z",
+        "doctor": {
+            "id": 1,
+            "name": "Caio de Souza",
+            "specialty": "Cardiologia"
+        },
+        "clinic": {
+            "id": 1,
+            "name": "clinica 1",
+            "address": "avenida vasco da gama, num 300",
+            "phone": 71987309678
+        }
+    }
+]
