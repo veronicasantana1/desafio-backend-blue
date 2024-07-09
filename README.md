@@ -10,7 +10,7 @@
 - Nodemailer
 - Dayjs
 - SQLite
-- Docker
+
 
 #### Configuração do Projeto
 
