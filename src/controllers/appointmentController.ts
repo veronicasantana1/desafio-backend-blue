@@ -6,24 +6,24 @@ import { BadRequestError } from "../helpers/api-errors";
 import { PersonRepository } from "../repositories/personRepository";
 import { generatePDF } from "../helpers/pdf-generator";
 import dayjs from "dayjs";
-
 import { Between } from "typeorm";
+import { sendAppointmentEmail } from "../mail/send-pdf";
 
 export async function createAppointment(req: Request, res: Response) {
-  const { date, id_clinic, id } = req.body;
+  const { date, id_clinic, id_doctor } = req.body;
   const user = req.user;
   if (!user) {
-    throw new BadRequestError("User not authenticated");
+    throw new BadRequestError("User not Usuário não autenticado");
   }
 
   const clinic = await ClinicRepository.findOneBy({ id: id_clinic });
   if (!clinic) {
-    throw new BadRequestError("Clinic not found");
+    throw new BadRequestError("Clínica não encontrada");
   }
 
-  const doctor = await DoctorRepository.findOneBy({ id });
+  const doctor = await DoctorRepository.findOneBy({ id: id_doctor});
   if (!doctor) {
-    throw new BadRequestError("Doctor not found");
+    throw new BadRequestError("Médico não encontrado");
   }
 
   const MoreThanDate = (date: Date) =>
@@ -54,7 +54,7 @@ export async function createAppointment(req: Request, res: Response) {
 
   if (overlappingSchedule.length > 0) {
     throw new BadRequestError(
-      "There is already a appointment for this time interval and doctor"
+      "Já existe um agendamento para este intervalo de tempo e médico"
     );
   }
 
@@ -63,37 +63,73 @@ export async function createAppointment(req: Request, res: Response) {
     id_doctor: doctor.id,
     date: date,
     id_clinic: clinic.id,
+    created_at: dayjs().utc().toDate(),
+    updated_at: dayjs().utc().toDate(), 
   });
 
   await AppointmentRepository.save(newAppointment);
   
-  
-  await generatePDF(newAppointment);
-  return res.status(201).json(newAppointment);
+  const doctorName = await PersonRepository.findOneBy({ id: doctor.id_person });
+  if (!doctorName) {
+    throw new BadRequestError("Médico não encontrado");
+  }
+
+  const clinicName = await ClinicRepository.findOneBy({ id: clinic.id });
+  if (!clinicName) {
+    throw new BadRequestError("Clínica não encontrada");
+  }
+
+  const userData = await PersonRepository.findOneBy({ id: user.id_person });
+  if (!userData) {
+    throw new BadRequestError("Usuário não encontrado");
+  }
+  const appointmentsData = {
+    date: newAppointment.date,
+    user: {
+      name: userData.name,
+      cpf: userData.cpf,
+      phone: userData.phone,
+      email: userData.email,
+    },
+    doctor: {
+      crm : doctor.crm,
+      name: doctorName.name,
+      specialty: doctor.specialty,
+    },
+    clinic: {name: clinicName.name, address: clinicName.address, phone: clinicName.phone},
+  };
+  try {
+    console.log(userData.email)
+    await sendAppointmentEmail(appointmentsData, userData.email);
+    return res.status(201).json(newAppointment);
+  } catch (error) {
+    console.error('Erro ao enviar e-mail:', error);
+    return res.status(500).json({ error: 'Erro ao enviar e-mail' });
+  }
 }
 
 export async function updateAppointment(req: Request, res: Response) {
   const { id, date, id_clinic, id_doctor } = req.body;
   const user = req.user;
   if (!user) {
-    throw new BadRequestError("User not authenticated");
+    throw new BadRequestError("Usuário não autenticado");
   }
 
   const existingAppointment = await AppointmentRepository.findOneBy({ id });
   if (!existingAppointment) {
-    throw new BadRequestError("Appointment not found");
+    throw new BadRequestError("Agendamento não encontrado");
   }
 
   const clinic = await ClinicRepository.findOneBy({ id: id_clinic });
   if (!clinic) {
-    throw new BadRequestError("Clinic not found");
+    throw new BadRequestError("Clínica não encontrada");
   }
 
   const doctor = await DoctorRepository.findOneBy({
     id: id_doctor,
   });
   if (!doctor) {
-    throw new BadRequestError("Doctor not found for this specialty");
+    throw new BadRequestError("Médico não encontrado");
   }
 
   const MoreThanDate = (date: Date) =>
@@ -127,7 +163,7 @@ export async function updateAppointment(req: Request, res: Response) {
     overlappingSchedule[0].id !== existingAppointment.id
   ) {
     throw new BadRequestError(
-      "There is already a appointment for this time interval and doctor"
+      "Já existe um agendamento para este intervalo de tempo e médico"
     );
   }
 
@@ -137,10 +173,47 @@ export async function updateAppointment(req: Request, res: Response) {
       id_doctor: doctor.id,
       id_clinic: clinic.id,
       date,
+      created_at: dayjs().utc().toDate(),
+      updated_at: dayjs().utc().toDate(), 
     }
   );
 
   const updatedAppointment = await AppointmentRepository.findOneBy({ id });
+  if (!updatedAppointment) {
+    throw new BadRequestError("Agendamento não encontrado");
+  }
+
+  const doctorName = await PersonRepository.findOneBy({ id: doctor.id_person });
+  if (!doctorName) {
+    throw new BadRequestError("Médico não encontrado");
+  }
+
+  const clinicName = await ClinicRepository.findOneBy({ id: clinic.id });
+  if (!clinicName) {
+    throw new BadRequestError("Clínica não encontrada");
+  }
+
+  const userData = await PersonRepository.findOneBy({ id: user.id });
+  if (!userData) {
+    throw new BadRequestError("Usuário não encontrado");
+  }
+  const appointmentsData = {
+    date: updatedAppointment.date,
+    user: {
+      name: userData.name,
+      cpf: userData.cpf,
+      phone: userData.phone,
+      email: userData.email,
+    },
+    doctor: {
+      crm : doctor.crm,
+      name: doctorName.name,
+      specialty: doctor.specialty,
+    },
+    clinic: {name: clinicName.name, address: clinicName.address, phone: clinicName.phone},
+  };
+
+  await generatePDF(appointmentsData);
   return res.status(200).json(updatedAppointment);
 }
 
@@ -148,26 +221,26 @@ export async function deleteAppointment(req: Request, res: Response) {
   const { id } = req.body;
   const user = req.user;
   if (!user) {
-    throw new BadRequestError("User not authenticated");
+    throw new BadRequestError("Usuário não autenticado");
   }
   const appointment = await AppointmentRepository.findOneBy({ id });
   if (!appointment) {
-    throw new BadRequestError("Appointment not found");
+    throw new BadRequestError("Consulta não encontrada");
   }
   await AppointmentRepository.delete(id);
-  return res.status(200).json({ message: "Appointment deleted" });
+  return res.status(200).json({ message: "Consulta Cancelada" });
 }
 
 export async function getAppointments(req: Request, res: Response) {
   const user = req.user;
   if (!user) {
-    throw new BadRequestError("User not authenticated");
+    throw new BadRequestError("Usuário não autenticado");
   }
   const appointments = await AppointmentRepository.find({
     where: { id_user: user.id },
   });
   if (!appointments) {
-    throw new BadRequestError("No appointments found");
+    throw new BadRequestError("Consultas não encontradas");
   }
 
   const appointmentsData = await Promise.all(
@@ -176,19 +249,19 @@ export async function getAppointments(req: Request, res: Response) {
         id: appointment.id_doctor,
       });
       if (!doctor) {
-        throw new BadRequestError("Doctor not found");
+        throw new BadRequestError("Médico não encontrado");
       }
       const doctorName = await PersonRepository.findOneBy({
         id: doctor.id_person,
       });
       if (!doctorName) {
-        throw new BadRequestError("Doctor not found");
+        throw new BadRequestError("Médico não encontrado");
       }
       const clinic = await ClinicRepository.findOneBy({
         id: appointment.id_clinic,
       });
       if (!clinic) {
-        throw new BadRequestError("Clinic not found");
+        throw new BadRequestError("Clínica não encontrada");
       }
 
       return {
@@ -199,7 +272,12 @@ export async function getAppointments(req: Request, res: Response) {
           name: doctorName.name,
           specialty: doctor.specialty,
         },
-        clinic: clinic.name,
+        clinic: {
+          id: clinic.id,
+          name: clinic.name,
+          address: clinic.address,
+          phone: clinic.phone,
+        },
       };
     })
   );

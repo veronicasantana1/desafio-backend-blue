@@ -8,12 +8,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { DoctorRepository } from '../repositories/doctorRepository';
 import { ClinicRepository } from '../repositories/clinicRepository';
+import dayjs from "dayjs";
 
 export async function createDoctor(req: Request, res: Response) {
     const { name, cpf, phone, email, crm, specialty, clinic  } = req.body;
     const doctorExists = await DoctorRepository.findOneBy({ crm });
     if (doctorExists) {
-      throw new BadRequestError("Doctor with this CRM already exists");
+      throw new BadRequestError("Já existe um médico cadastrado com este CRM");
     }
     const newPerson = PersonRepository.create({
       name,
@@ -25,14 +26,16 @@ export async function createDoctor(req: Request, res: Response) {
 
     const clinicName = await ClinicRepository.findOneBy({name: clinic})
     if (!clinicName) {
-      throw new BadRequestError("Clinic not found");
+      throw new BadRequestError("Clínica não encontrada");
     }
 
     const newDoctor = DoctorRepository.create({
         crm,
         specialty,
         id_person: newPerson.id,
-        id_clinic: clinicName.id
+        id_clinic: clinicName.id,
+        created_at: dayjs().utc().toDate(),
+        updated_at: dayjs().utc().toDate(), 
     })
 
     await DoctorRepository.save(newDoctor);

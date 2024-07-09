@@ -12,7 +12,7 @@ export class Person {
     cpf: string;
 
     @Column()
-    phone: string;
+    phone: number;
 
     @Column()
     email: string;

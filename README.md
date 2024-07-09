@@ -1,52 +1,273 @@
-# Desafio de Backend - API de Marcação de Consultas
+Aqui está a seção traduzida e atualizada:
 
-Bem-vindo ao desafio de backend da Blue Health Tech! Este desafio é uma oportunidade para demonstrar suas habilidades de desenvolvimento de API, compreensão de conceitos de backend, e capacidade de aplicar boas práticas de engenharia de software.
+### Projeto Node.js com Express, TypeORM, JWT, Nodemailer e Dayjs
 
-## Objetivo
+#### Tecnologias Utilizadas
 
-Desenvolver uma API RESTful para a marcação de consultas médicas. A API permitirá que usuários façam login, agendem consultas, visualizem detalhes de suas consultas em PDF, e modifiquem ou cancelem essas consultas.
+- Node.js
+- Express
+- TypeORM
+- JWT (JSON Web Tokens)
+- Nodemailer
+- Dayjs
 
-## Requisitos do Desafio
+#### Configuração do Projeto
 
-- **Autenticação:** Implemente o login de usuários utilizando JWT.
-- **Agendamento de Consultas:** Permita que os usuários agendem novas consultas.
-- **Geração de PDF:** Após agendar uma consulta, gere um PDF com os detalhes da consulta.
-- **Visualização de Consultas:** Permita que os usuários vejam informações detalhadas sobre suas consultas, a rota deve ser criptografada com um link de acesso único.
-- **Modificação e Cancelamento de Consultas:** Os usuários devem poder modificar detalhes de suas consultas ou cancelá-las.
+#### Extensões do VS Code Necessárias
 
-## Critérios Técnicos
+- **SQLite**
+- **SQLite Viewer**
 
-- **Banco de Dados:** Use alguma ferramenta para gerenciamento do banco de dados.
-- **Arquitetura:** Siga o padrão MVC para estruturação do projeto. 
-- **Linguagens permitidas:** PHP + Symphony |  Node Js + Express.
-- **Tratamento de Erros:** Implemente um sistema de tratamento de erros eficaz.
+1. **Clone o repositório**
 
-## Entregáveis
+2. **Instale as dependências**
 
-- Código-fonte no GitHub com acesso ao repositório fornecido pela equipe da Blue.
-- Documentação no README, detalhando:
-  - Instruções de instalação e execução do projeto.
-  - Descrição das tecnologias utilizadas.
-  - Lista de rotas disponíveis e como utilizá-las.
+   npm install
 
-## Avaliação
+3. **Configuração das variáveis de ambiente**
 
-O desafio será avaliado com base em:
+   Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
-- **Qualidade do Código:** Clareza, uso de boas práticas, padrões de projeto e segurança.
-- **Funcionalidade:** Todos os requisitos devem ser atendidos.
-- **Design da API:** Clareza, consistência, e aderência aos princípios RESTful.
-- **Documentação:** Completa e clara, facilitando a compreensão e uso da API.
+   ```dotenv
+   PORT=3000
+   JWT_SECRET=sua_chave_secreta
+   EMAIL_USER="seuemail@gmail.com"
+   EMAIL_PASS="sua_senha_de_aplicativo"
+   ```
 
-## Como Iniciar
+#### Execução do Projeto
 
-1. Faça um fork deste repositório.
-2. Clone seu fork para sua máquina local.
-3. Siga as instruções de instalação específicas para configurar o ambiente de desenvolvimento.
-4. Comece a desenvolver, seguindo os requisitos e critérios técnicos descritos acima.
+1. **Execute as migrações do banco de dados**
 
-## Entrega
+   ```
+   npm run migration:run
+   ```
 
-Quando estiver pronto para submeter seu desafio, crie um Pull Request do seu repositório forkado para o repositório principal da Blue Company. A equipe de desenvolvimento revisará sua entrega.
+   (Certifique-se de que seu ambiente esteja configurado para suportar SQLite ou o banco de dados que você está utilizando com TypeORM)
 
-Boa sorte e estamos ansiosos para ver suas soluções inovadoras!
+2. **Inicie o servidor**
+
+   ```
+   npm run dev
+   ```
+
+   O servidor estará rodando em http://localhost:3000.
+
+#### Rotas Disponíveis
+
+1. **Criar uma clínica**
+
+   - **Rota**: `POST /clinic/createClinic`
+   - **Exemplo de Corpo de Requisição**:
+
+     ```json
+     {
+       "name": "clinica 1",
+       "address": "avenida vasco da gama",
+       "phone": 71987309678,
+       "cnpj": "12.345.678/0001-00",
+       "cep": "41098031"
+     }
+     ```
+
+   - **Exemplo de Resposta**:
+
+     ```json
+     {
+       "name": "clinica 1",
+       "address": "avenida vasco da gama",
+       "phone": 71987309678,
+       "cnpj": "12.345.678/0001-00",
+       "cep": "41098031",
+       "created_at": "2024-07-09T02:03:46.853Z",
+       "updated_at": "2024-07-09T02:03:46.854Z",
+       "id": 9
+     }
+     ```
+
+2. **Criar um médico**
+
+   - **Rota**: `POST /doctor/createDoctor`
+   - **Exemplo de Corpo de Requisição**:
+
+     ```json
+     {
+       "name": "clinica 1",
+       "cpf": "12334568900",
+       "phone": 719873009,
+       "email": "doctor@email.com",
+       "crm": "20392093",
+       "specialty": "Cardiologia",
+       "clinic": "clinica 1"
+     }
+     ```
+
+   - **Exemplo de Resposta**:
+
+     ```json
+     {
+       "id_person": 3,
+       "id_clinic": 1,
+       "specialty": "Cardiologia",
+       "crm": "20392093",
+       "created_at": "2024-07-09T02:05:41.751Z",
+       "updated_at": "2024-07-09T02:05:41.751Z",
+       "id": 2
+     }
+     ```
+
+3. **Criar um usuário**
+   **Certifique-se de que o e-mail seja acessível para visualização do PDF que será enviado para ele ao final da criação da consulta.**
+
+   - **Rota**: `POST /users/createUser`
+   - **Exemplo de Corpo de Requisição**:
+
+     ```json
+     {
+       "email": "vel2@email.com",
+       "password": "senha",
+       "name": "vel",
+       "cpf": "123.456.789-09",
+       "phone": 71987566959
+     }
+     ```
+
+   - **Exemplo de Resposta**:
+
+     ```json
+     {
+       "id_person": 4,
+       "email": "vel2@email.com",
+       "created_at": "2024-07-09T02:11:16.899Z",
+       "updated_at": "2024-07-09T02:11:16.899Z",
+       "insurance": null,
+       "desc_insurance": null,
+       "id": 2
+     }
+     ```
+
+4. **Login do usuário**
+
+   - **Rota**: `POST /users/login`
+   - **Exemplo de Corpo de Requisição**:
+
+     ```json
+     {
+       "email": "vel2@gmail.com",
+       "password": "senha"
+     }
+     ```
+
+   - **Exemplo de Resposta**:
+
+     ```json
+     {
+       "userData": {
+         "id": 2,
+         "id_person": 4,
+         "email": "vel2@email.com",
+         "insurance": null,
+         "desc_insurance": null,
+         "created_at": "2024-07-09T02:11:16.899Z",
+         "updated_at": "2024-07-09T02:11:16.899Z"
+       },
+       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzIwNDkxMTQ2LCJleHAiOjE3MjA1MTk5NDZ9.YFwqR0IYjs226YBWD_JHwqQktozWyM_Of51pO8Ru9mA"
+     }
+     ```
+
+5. **Obter perfil do usuário autenticado**
+
+- **Incluir o Token retornado ao fazer login no cabeçalho Authorization como "Bearer token"**
+
+  - **Rota**: `GET /users/profile`
+  - **Exemplo de Resposta**:
+
+    ```json
+    {
+      "id": 2,
+      "id_person": 4,
+      "email": "vel2@email.com",
+      "insurance": null,
+      "desc_insurance": null,
+      "created_at": "2024-07-09T02:11:16.899Z",
+      "updated_at": "2024-07-09T02:11:16.899Z"
+    }
+    ```
+
+6. **Criar uma consulta**
+   **Nessa rota será gerado um pdf que se encontrará na pasta deste repositório e também será enviado para o email do usuário cadastrado anteriormente.**
+
+- **Incluir o Token retornado ao fazer login no cabeçalho Authorization como "Bearer token"**
+
+  - **Rota**: `POST /appointment/createAppointment`
+  - **Exemplo de Corpo de Requisição**:
+
+    ```json
+    {
+      "date": "2024-07-09T17:40:00.000Z",
+      "id_clinic": 1,
+      "id_doctor": 1
+    }
+    ```
+
+  - **Exemplo de Resposta**:
+
+    ```json
+    {
+      "id_user": 1,
+      "id_doctor": 1,
+      "date": "2089-05-09T17:40:00.000Z",
+      "id_clinic": 1,
+      "created_at": "2024-07-09T01:32:27.952Z",
+      "updated_at": "2024-07-09T01:32:27.952Z",
+      "id": 67
+    }
+    ```
+
+7. **Modificar dados da consulta**
+
+- **Incluir o Token retornado ao fazer login no cabeçalho Authorization como "Bearer token"**
+
+  - **Rota**: `POST /appointment/updateAppointment`
+  - **Exemplo de Corpo de Requisição**:
+
+    ```json
+    {
+      "id": 2,
+      "date": "2025-05-09T17:40:00.000Z",
+      "id_doctor": 1,
+      "id_clinic": 1
+    }
+    ```
+
+  - **Exemplo de Resposta**:
+
+    ```json
+    {
+      "id": 2,
+      "id_user": 1,
+      "id_doctor": 1,
+      "date": "2025-05-09T17:40:00.000Z",
+      "id_clinic": 1,
+      "created_at": "2024-07-09T02:32:43.082Z",
+      "updated_at": "2024-07-09T02:32:43.082Z"
+    }
+    ```
+
+8. **Deletar dados da consulta**
+
+- **Incluir o Token retornado ao fazer login no cabeçalho Authorization como "Bearer token"**
+
+  - **Rota**: `POST /appointment/deleteAppointment`
+  - **Exemplo de Corpo de Requisição**:
+
+    ```json
+    {
+      "id": 2
+    }
+    ```
+
+9. **Visualizar dados das consultas**
+
+   - **Rota**: `GET /appointment/getAppointments`
+   - **Incluir o Token retornado ao fazer login no cabeçalho Authorization como "Bearer token"**
