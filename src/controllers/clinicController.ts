@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { BadRequestError } from "../helpers/api-errors";
 import { ClinicRepository } from "../repositories/clinicRepository";
-import dayjs from "dayjs";
 
 export async function createClinic(req: Request, res: Response) {
     const { name, address, phone, cnpj, cep } = req.body;
