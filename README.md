@@ -1,4 +1,3 @@
-Aqui está a seção traduzida e atualizada:
 
 ### Projeto Node.js com Express, TypeORM, JWT, Nodemailer e Dayjs
 
